@@ -574,10 +574,10 @@ def get_beneficiaries(request_header):
     """
     refined_beneficiaries = []
     tmp = {
-        'bref_id': 67138088966190,
-        'name': "Anurag Agarwal",
+        'bref_id': 1234,
+        'name': "YourName",
         'vaccine': "",
-        'age': 45,
+        'age': 23,
         'status': "Not Vaccinated"
     }
     refined_beneficiaries.append(tmp)
