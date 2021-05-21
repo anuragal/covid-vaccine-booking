@@ -417,6 +417,7 @@ def check_and_book(request_header, beneficiary_dtls, location_dtls, search_optio
                 cleaned_options_for_display.append(item)
 
             display_table(cleaned_options_for_display)
+            beep(WARNING_BEEP_DURATION[0], WARNING_BEEP_DURATION[1])
             if auto_book == 'yes-please':
                 print("AUTO-BOOKING IS ENABLED. PROCEEDING WITH FIRST CENTRE, DATE, and RANDOM SLOT.")
                 option = options[0]
