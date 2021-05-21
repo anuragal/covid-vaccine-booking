@@ -52,7 +52,6 @@ def viable_options(resp, minimum_slots, min_age_booking, fee_type, dose):
                         'session_id': session['session_id']
                     }
                     options.append(out)
-
                 else:
                     pass
     else:
@@ -203,10 +202,10 @@ def collect_user_details(request_header):
     # Get preference of Free/Paid option
     fee_type = get_fee_type_preference()
 
-    print("\n=========== CAUTION! =========== CAUTION! CAUTION! =============== CAUTION! =======\n")
-    print("===== BE CAREFUL WITH THIS OPTION! AUTO-BOOKING WILL BOOK THE FIRST AVAILABLE CENTRE, DATE, AND A RANDOM SLOT! =====")
-    auto_book = input("Do you want to enable auto-booking? (yes-please or no) Default no: ")
-    auto_book = 'no' if not auto_book else auto_book
+    # print("\n=========== CAUTION! =========== CAUTION! CAUTION! =============== CAUTION! =======\n")
+    # print("===== BE CAREFUL WITH THIS OPTION! AUTO-BOOKING WILL BOOK THE FIRST AVAILABLE CENTRE, DATE, AND A RANDOM SLOT! =====")
+    # auto_book = input("Do you want to enable auto-booking? (yes-please or no) Default no: ")
+    auto_book = 'no' # if not auto_book else auto_book
 
     collected_details = {
         'beneficiary_dtls': beneficiary_dtls,
@@ -288,15 +287,14 @@ def check_calendar_by_pincode(request_header, vaccine_type, location_dtls, start
             resp = requests.get(base_url.format(location['pincode'], start_date), headers=request_header)
 
             if resp.status_code == 401:
-                print('TOKEN INVALID')
-                return False
+                print('TOKEN INVALID11')
+                pass
 
             elif resp.status_code == 200:
                 resp = resp.json()
                 if 'centers' in resp:
                     print(f"Centers available in {location['pincode']} from {start_date} as of {today.strftime('%Y-%m-%d %H:%M:%S')}: {len(resp['centers'])}")
                     options += viable_options(resp, minimum_slots, min_age_booking, fee_type, dose)
-
             else:
                 pass
 
@@ -573,58 +571,18 @@ def get_beneficiaries(request_header):
         2. Prompts user to select the applicable beneficiaries, and
         3. Returns the list of beneficiaries as list(dict)
     """
-    beneficiaries = requests.get(BENEFICIARIES_URL, headers=request_header)
+    refined_beneficiaries = []
+    tmp = {
+        'bref_id': 67138088966190,
+        'name': "Anurag Agarwal",
+        'vaccine': "",
+        'age': 45,
+        'status': "Not Vaccinated"
+    }
+    refined_beneficiaries.append(tmp)
 
-    if beneficiaries.status_code == 200:
-        beneficiaries = beneficiaries.json()['beneficiaries']
-
-        refined_beneficiaries = []
-        for beneficiary in beneficiaries:
-            beneficiary['age'] = datetime.datetime.today().year - int(beneficiary['birth_year'])
-
-            tmp = {
-                'bref_id': beneficiary['beneficiary_reference_id'],
-                'name': beneficiary['name'],
-                'vaccine': beneficiary['vaccine'],
-                'age': beneficiary['age'],
-                'status': beneficiary['vaccination_status']
-            }
-            refined_beneficiaries.append(tmp)
-
-        display_table(refined_beneficiaries)
-        print("""
-        ################# IMPORTANT NOTES #################
-        # 1. While selecting beneficiaries, make sure that selected beneficiaries are all taking the same dose: either first OR second.
-        #    Please do no try to club together booking for first dose for one beneficiary and second dose for another beneficiary.
-        #
-        # 2. While selecting beneficiaries, also make sure that beneficiaries selected for second dose are all taking the same vaccine: COVISHIELD OR COVAXIN.
-        #    Please do no try to club together booking for beneficiary taking COVISHIELD with beneficiary taking COVAXIN.
-        #
-        # 3. If you're selecting multiple beneficiaries, make sure all are of the same age group (45+ or 18+) as defined by the govt.
-        #    Please do not try to club together booking for younger and older beneficiaries.
-        ###################################################
-        """)
-        reqd_beneficiaries = input('Enter comma separated index numbers of beneficiaries to book for : ')
-        beneficiary_idx = [int(idx) - 1 for idx in reqd_beneficiaries.split(',')]
-        reqd_beneficiaries = [{
-            'bref_id': item['beneficiary_reference_id'],
-            'name': item['name'],
-            'vaccine': item['vaccine'],
-            'age': item['age'],
-            'status': item['vaccination_status']
-        } for idx, item in enumerate(beneficiaries) if idx in beneficiary_idx]
-
-        print(f'Selected beneficiaries: ')
-        display_table(reqd_beneficiaries)
-        return reqd_beneficiaries
-
-    else:
-        print('Unable to fetch beneficiaries')
-        print(beneficiaries.status_code)
-        print(beneficiaries.text)
-        os.system("pause")
-        return []
-
+    
+    return refined_beneficiaries
 
 def get_min_age(beneficiary_dtls):
     """

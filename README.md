@@ -1,5 +1,9 @@
 # COVID-19 Vaccination Slot Booking Script
-## Update:
+
+## Code Changes
+Removed the requirement of valid session. Now this script only checks for availability, no slot booking
+
+### Update:
 ### **We are getting all kinds of attention now - which I do not want to handle. So there won't be any additional commits to this project. It has been put on indefinite hold.**
 
 
